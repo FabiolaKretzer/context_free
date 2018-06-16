@@ -183,7 +183,7 @@ public class AlgorithmsTest {
  * Test of productive method, of class Algorithms.
 */
     @Test
-    public void testProductive() {
+    public void testFertile() {
         /**
         * S -> aS|BC|BD
         * A -> cC|AB
@@ -222,7 +222,7 @@ public class AlgorithmsTest {
         
         Algorithms alg = new Algorithms();
         
-        assertEquals(result.toString(), alg.productive(g));
+        assertEquals(result.toString(), alg.fertile(g));
     }
 
 /**

@@ -11,16 +11,6 @@ public class Context_free {
     protected Character initialSymbol;
     Map<Character, ArrayList<String>> productions;
     public String name ="";
-    Context_free proper;
-    Context_free productive;
-    Context_free reachable;
-    Context_free epsilonFree;
-    Context_free removeCycles;
-    Context_free factoredNsteps;
-    Context_free recursiveLeft;
-    Map<Character, ArrayList<String>> first;
-    Map<Character, ArrayList<String>> follow;
-    Map<Character, ArrayList<String>> firstNT;
          
 /**
    * Constructor sem parâmetros, apenas inicialização das produções de uma gramática
@@ -44,15 +34,6 @@ public class Context_free {
         this.initialSymbol = initialSymbol;
         this.name = name;
         this.productions = new HashMap<>();
-        this.proper = new Context_free();
-        this.reachable = new Context_free();
-        this.epsilonFree = new Context_free();
-        this.removeCycles = new Context_free();
-        this.factoredNsteps = new Context_free();
-        this.recursiveLeft = new Context_free();
-        this.first = new HashMap<>();
-        this.follow = new HashMap<>();
-        this.firstNT = new HashMap<>();
     }
    
 /**
@@ -124,68 +105,6 @@ public class Context_free {
             productions.put(c, list);
         }
     }
-    
- /**
-   * Pega as gramaticas livre de contexto
-*/    
-    public Context_free getProper(){
-        return proper;
-    }
-    
-    public Context_free getProductive(){
-        return productive;
-    }
-    
-    public Context_free getReachable(){
-        return reachable;
-    }
-    
-    public Context_free getEpsilonFree(){
-        return epsilonFree;
-    }
-    
-    public Context_free getRemoveCycles(){
-        return removeCycles;
-    }
-    
-    public Context_free getFactoredNsteps(){
-        return factoredNsteps;
-    }
-    
-    public Context_free getRecursiveLeft(Context_free recursiveLeft){
-        return recursiveLeft;
-    }
- 
-/**
-   * Seta uma gramatica livre de contexto
-*/ 
-     public void setProper(Context_free proper){
-        this.proper = proper;
-    }
-    
-    public void setProductive(Context_free productive){
-        this.productive = productive;
-    }
-    
-    public void setReachable(Context_free reachable){
-        this.reachable = reachable;
-    }
-    
-    public void setEpsilonFree(Context_free epsilonFree){
-        this.epsilonFree = epsilonFree;
-    }
-    
-    public void setRemoveCycles(Context_free removeCycles){
-        this.removeCycles = removeCycles;
-    }
-    
-    public void setFactoredNsteps(Context_free factoredNsteps){
-        this.factoredNsteps = factoredNsteps;
-    }
-    
-    public void setRecursiveLeft(Context_free recursiveLeft){
-        this.recursiveLeft = recursiveLeft;
-    }       
     
 /**
    * Visualizar a gramática regular
