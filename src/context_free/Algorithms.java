@@ -5,6 +5,7 @@ package context_free;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class Algorithms {
@@ -30,7 +31,7 @@ public class Algorithms {
             aux.add(key);
         }
         for(Character key : g_reac.getProductions().keySet()){
-            ArrayList<String> temp = g_reac.productions.get(key);
+            ArrayList<String> temp = g_reac.getProductions().get(key);
             for(String s : temp){
                 int i = 0;
                 HashSet<Boolean> bool = new HashSet<>();
@@ -69,7 +70,7 @@ public class Algorithms {
             aux.add(key);
         }
         for(Character key : g_reac.getProductions().keySet()){
-            ArrayList<String> temp = g_reac.productions.get(key);
+            ArrayList<String> temp = g_reac.getProductions().get(key);
             for(String s : temp){
                 int i = 0;
                 while(i < s.length()) {
@@ -112,9 +113,9 @@ public class Algorithms {
         boolean bool = false;
         Context_free gnew = grammar.getClone();
         for(Character key : gnew.getProductions().keySet()){
-            ArrayList<String> temp = gnew.productions.get(key);
+            ArrayList<String> temp = gnew.getProductions().get(key);
             for(String s : temp){
-                if(key != gnew.getInitialSymbol() && s == "&"){
+                if(!Objects.equals(key, gnew.getInitialSymbol()) && "&".equals(s)){
                     bool = true;
                 }
             }
@@ -127,10 +128,11 @@ public class Algorithms {
 */ 
     public Context_free epsilonFree(Context_free grammar){
         Context_free gnew = grammar.getClone();
+        Context_free gRet = new Context_free();
         if(isEpsilonFree(gnew)){
             return gnew;
         }
-        return new Context_free();
+        return gRet;
     }
     
 /**
@@ -143,7 +145,7 @@ public class Algorithms {
             aux.add(key);
         }
         for(Character key : gnew.getProductions().keySet()){
-            ArrayList<String> temp = gnew.productions.get(key);
+            ArrayList<String> temp = gnew.getProductions().get(key);
             for(String s : temp){
                 if(s.length() == 1 && aux.contains(s.charAt(0))){
                     return true;
@@ -232,7 +234,13 @@ public class Algorithms {
    * Calculate first the context free grammar
 */      
     public boolean isFactored(Context_free grammar){
-        
+        Context_free gnew = grammar.getClone();
+        for(Character key : gnew.getProductions().keySet()){
+            ArrayList<String> list = gnew.getProductions().get(key);
+            for(String s : list){
+                
+            }
+        }
         return true;
     }
 
