@@ -109,16 +109,17 @@ public class Algorithms {
    * Context free grammar is epsilon free?
 */ 
     public boolean isEpsilonFree(Context_free grammar){
+        boolean bool = false;
         Context_free gnew = grammar.getClone();
         for(Character key : gnew.getProductions().keySet()){
             ArrayList<String> temp = gnew.productions.get(key);
             for(String s : temp){
                 if(key != gnew.getInitialSymbol() && s == "&"){
-                    return true;
+                    bool = true;
                 }
             }
         }
-        return false;
+        return bool;
     }
     
 /**
