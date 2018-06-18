@@ -3,6 +3,7 @@
 package context_free;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -213,21 +214,116 @@ public class Algorithms {
    * Calculate first the context free grammar
 */     
     public Map<Character, ArrayList<String>> first(Context_free grammar){
-        return (Map<Character, ArrayList<String>>) new ArrayList<>();
+        Context_free gnew = grammar.getClone();
+        Map<Character, ArrayList<String>> vt = new HashMap<>();
+        ArrayList<Character> vn = new ArrayList<>();
+        for (Character key : gnew.getProductions().keySet()){
+            vn.add(key);
+        }
+        for (Character key : gnew.getProductions().keySet()){
+            ArrayList<String> list = gnew.getProductions().get(key);
+            for(String s : list){
+                if(!vn.contains(s.charAt(0))){
+                    ArrayList<String> aux =  new ArrayList<>();
+                    aux.add(s.charAt(0)+"");
+                    vt.put(key, aux);
+                } else{
+                    ArrayList<String> f = vt.get(s.charAt(0));
+                    vt.put(key, f);
+                    int i = 1;
+                    while(i < s.length() && vn.contains(s.charAt(i))) {
+                        char c = s.charAt(i-1);
+                        ArrayList<String> c_aux = gnew.getProductions().get(c);
+                        if(c_aux.contains("&")){
+                            ArrayList<String> f_aux = vt.get(s.charAt(i));
+                            vt.put(key, f_aux);
+                        } else{
+                            break;
+                        }
+                        i++;
+                    }
+                    if(!vn.contains(s.charAt(i-1))){
+                        ArrayList<String> aux2 =  new ArrayList<>();
+                        aux2.add(s.charAt(i)+"");
+                        vt.put(key, aux2); 
+                    }
+                }
+            }
+        }
+        return vt;
     }
 
 /**
    * Calculate follow the context free grammar
 */      
     public Map<Character, ArrayList<String>> follow(Context_free grammar){
-        return (Map<Character, ArrayList<String>>) new ArrayList<String>();
+        Context_free gnew = grammar.getClone();
+        Algorithms alg = new Algorithms();
+        Map<Character, ArrayList<String>> vt_first = alg.first(gnew);
+        Map<Character, ArrayList<String>> vt = new HashMap<>();
+        ArrayList<Character> vn = new ArrayList<>();
+        ArrayList<String> aux = new ArrayList<>();
+        aux.add("$");
+        vt.put(gnew.getInitialSymbol(), aux);
+        for (Character key : gnew.getProductions().keySet()){
+            vn.add(key);
+        }
+        for (Character key : gnew.getProductions().keySet()){
+            ArrayList<String> list = gnew.getProductions().get(key);
+            for(String s : list){
+                for(int i = 0; i < s.length(); i++){
+                    char c = s.charAt(i);
+                    //for(int j = i+1; j < s.length(); j++){
+                        if(vn.contains(c) && i != s.length()-1){
+                            if(vt_first.get(s.charAt(i+1)) != null){
+                                ArrayList<String> aux2 = vt_first.get(s.charAt(i+1));
+                                if(aux2.contains("&")){
+                                    aux2.remove(c);
+                                }
+                                vt.put(c, aux2);
+                            }
+                        } else{
+                            break;
+                        }
+                    //}
+                }
+            }
+        }
+        return vt;
     }
     
 /**
    * Calculate firstNT the context free grammar
 */  
     public Map<Character, ArrayList<String>> firstNT(Context_free grammar){
-        return (Map<Character, ArrayList<String>>) new ArrayList<String>();
+        Context_free gnew = grammar.getClone();
+        Map<Character, ArrayList<String>> vt = new HashMap<>();
+        ArrayList<Character> vn = new ArrayList<>();
+        for (Character key : gnew.getProductions().keySet()){
+            vn.add(key);
+        }
+        for(Character key : gnew.getProductions().keySet()){
+            ArrayList<String> list = gnew.getProductions().get(key);
+            for(String s : list){
+                if(vn.contains(s.charAt(0))){
+                    ArrayList<String> aux = new ArrayList<>();
+                    aux.add(s.charAt(0)+"");
+                    vt.put(key, aux);
+                    int i = 0;
+                    while(i < s.length()){
+                        char c = s.charAt(0);
+                        ArrayList<String> list2 = gnew.getProductions().get(c);
+                        if(list2.contains("&")){
+                            ArrayList<String> aux2 = new ArrayList<>();
+                            aux2.add(s.charAt(0)+"");
+                            vt.put(key, aux2);
+                        }
+                        i++;
+                    }
+                }
+            }       
+        }
+        return vt;
     }
 
 /**
