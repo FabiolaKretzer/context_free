@@ -306,17 +306,29 @@ public class Algorithms {
             ArrayList<String> list = gnew.getProductions().get(key);
             for(String s : list){
                 if(vn.contains(s.charAt(0))){
-                    ArrayList<String> aux = new ArrayList<>();
-                    aux.add(s.charAt(0)+"");
-                    vt.put(key, aux);
+                    if(vt.get(key) == null){
+                        ArrayList<String> aux = new ArrayList<>();
+                        aux.add(s.charAt(0)+"");
+                        vt.put(key, aux);
+                    } else {
+                        ArrayList<String> aux = vt.get(key);
+                        aux.add(s.charAt(0)+"");
+                        vt.put(key, aux);
+                    }
                     int i = 0;
-                    while(i < s.length()){
+                    while(i < s.length() && vn.contains(s.charAt(i))){
                         char c = s.charAt(0);
                         ArrayList<String> list2 = gnew.getProductions().get(c);
                         if(list2.contains("&")){
-                            ArrayList<String> aux2 = new ArrayList<>();
-                            aux2.add(s.charAt(0)+"");
-                            vt.put(key, aux2);
+                            if(vt.get(key) == null){
+                                ArrayList<String> aux2 = new ArrayList<>();
+                                aux2.add(s.charAt(i)+"");
+                                vt.put(key, aux2);
+                            } else {
+                                ArrayList<String> aux2 = vt.get(key);
+                                aux2.add(s.charAt(i)+"");
+                                vt.put(key, aux2);
+                            }
                         }
                         i++;
                     }

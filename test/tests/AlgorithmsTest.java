@@ -690,8 +690,6 @@ public class AlgorithmsTest {
         list.put('C', fc);
         
         ArrayList<String> fd = new ArrayList<>();
-        fd.add("C");
-        fd.add("D");
         list.put('D', fd);
         
         ArrayList<String> fe = new ArrayList<>();
