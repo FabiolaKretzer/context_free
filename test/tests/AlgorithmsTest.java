@@ -519,6 +519,22 @@ public class AlgorithmsTest {
         
         HashMap<Character, ArrayList<String>> list = new HashMap<>();
         
+        ArrayList<String> a = new ArrayList<>();
+        a.add("a");
+        list.put('a', a);
+        
+        ArrayList<String> b = new ArrayList<>();
+        a.add("b");
+        list.put('b', b);
+        
+        ArrayList<String> c = new ArrayList<>();
+        a.add("c");
+        list.put('c', c);
+        
+        ArrayList<String> d = new ArrayList<>();
+        a.add("d");
+        list.put('d', d);
+        
         ArrayList<String> fs = new ArrayList<>();
         fs.add("a");
         fs.add("b");

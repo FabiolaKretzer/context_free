@@ -220,33 +220,47 @@ public class Algorithms {
         for (Character key : gnew.getProductions().keySet()){
             vn.add(key);
         }
+        for(Character key : gnew.getProductions().keySet()){
+            ArrayList<String> list_aux = gnew.getProductions().get(key);
+            for(String s : list_aux){
+                int i = 0;
+                while(i < s.length()){
+                    if(!vn.contains(s.charAt(i))){
+                        ArrayList<String> terminal = new ArrayList<>();
+                        terminal.add(s.charAt(i)+"");
+                        vt.put(s.charAt(i), terminal);
+                    }
+                    i++;
+                }
+            }
+        }
         for (Character key : gnew.getProductions().keySet()){
             ArrayList<String> list = gnew.getProductions().get(key);
             for(String s : list){
-                if(!vn.contains(s.charAt(0))){
-                    ArrayList<String> aux =  new ArrayList<>();
-                    aux.add(s.charAt(0)+"");
-                    vt.put(key, aux);
-                } else{
-                    ArrayList<String> f = vt.get(s.charAt(0));
-                    vt.put(key, f);
-                    int i = 1;
-                    while(i < s.length() && vn.contains(s.charAt(i))) {
-                        char c = s.charAt(i-1);
-                        ArrayList<String> c_aux = gnew.getProductions().get(c);
-                        if(c_aux.contains("&")){
-                            ArrayList<String> f_aux = vt.get(s.charAt(i));
-                            vt.put(key, f_aux);
-                        } else{
-                            break;
-                        }
-                        i++;
-                    }
+                int i = 1;
+                while(i < s.length()){
                     if(!vn.contains(s.charAt(i-1))){
-                        ArrayList<String> aux2 =  new ArrayList<>();
-                        aux2.add(s.charAt(i)+"");
-                        vt.put(key, aux2); 
+                        if(vt.get(key) == null){
+                            ArrayList<String> aux = new ArrayList<>();
+                            aux.add(s.charAt(i-1)+"");
+                            vt.put(key, aux);
+                        } else {
+                            ArrayList<String> aux = vt.get(key);
+                            aux.add(s.charAt(i-1)+"");
+                            vt.put(key, aux);
+                        }
+                    } else{
+                        ArrayList<String> aux2 = vt.get(s.charAt(i-1));
+                        vt.put(key, aux2);                    
+                        if(gnew.getProductions().get(i) != null && gnew.getProductions().get(i-1).contains("&")){
+                            ArrayList<String> aux3 = vt.get(s.charAt(i));
+                            ArrayList<String> aux4 = vt.get(key);
+                            for(String t: aux4)
+                                aux3.add(t);
+                            vt.put(key, aux3);
+                        } 
                     }
+                    i++;
                 }
             }
         }
