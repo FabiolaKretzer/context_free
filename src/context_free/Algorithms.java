@@ -237,33 +237,44 @@ public class Algorithms {
         for (Character key : gnew.getProductions().keySet()){
             ArrayList<String> list = gnew.getProductions().get(key);
             for(String s : list){
-                int i = 1;
-                while(i < s.length()){
-                    if(!vn.contains(s.charAt(i-1))){
+                if(!vn.contains(s.charAt(0))){
+                    if(vt.get(key) == null){
+                        ArrayList<String> aux = new ArrayList<>();
+                        aux.add(s.charAt(0)+"");
+                        vt.put(key, aux);
+                    } else {
+                        ArrayList<String> aux = vt.get(key);
+                        aux.add(s.charAt(0)+"");
+                        vt.put(key, aux);
+                    }
+                }
+            }
+        }
+        Algorithms alg = new Algorithms();
+        Map<Character, ArrayList<String>> fNT = alg.firstNT(gnew);
+        for (Character key : gnew.getProductions().keySet()){
+            ArrayList<String> list = gnew.getProductions().get(key);
+            for(String s : list){
+                int i = 0;
+                while(i < s.length() && vn.contains(s.charAt(i))){
+                    ArrayList<String> list2 = fNT.get(key);
+                    if(list2.contains(s.charAt(i)+"")){
                         if(vt.get(key) == null){
-                            ArrayList<String> aux = new ArrayList<>();
-                            aux.add(s.charAt(i-1)+"");
+                            ArrayList<String> aux = vt.get(s.charAt(i));
                             vt.put(key, aux);
                         } else {
                             ArrayList<String> aux = vt.get(key);
-                            aux.add(s.charAt(i-1)+"");
+                            ArrayList<String> aux2 = vt.get(s.charAt(i));
+                            for(String st : aux2){
+                                aux.add(st);
+                            }
                             vt.put(key, aux);
                         }
-                    } else{
-                        ArrayList<String> aux2 = vt.get(s.charAt(i-1));
-                        vt.put(key, aux2);                    
-                        if(gnew.getProductions().get(i) != null && gnew.getProductions().get(i-1).contains("&")){
-                            ArrayList<String> aux3 = vt.get(s.charAt(i));
-                            ArrayList<String> aux4 = vt.get(key);
-                            for(String t: aux4)
-                                aux3.add(t);
-                            vt.put(key, aux3);
-                        } 
                     }
                     i++;
                 }
             }
-        }
+        }        
         return vt;
     }
 
@@ -285,21 +296,19 @@ public class Algorithms {
         for (Character key : gnew.getProductions().keySet()){
             ArrayList<String> list = gnew.getProductions().get(key);
             for(String s : list){
-                for(int i = 0; i < s.length(); i++){
+                for(int i = 0; i < s.length() - 1; i++){
                     char c = s.charAt(i);
-                    //for(int j = i+1; j < s.length(); j++){
-                        if(vn.contains(c) && i != s.length()-1){
-                            if(vt_first.get(s.charAt(i+1)) != null){
-                                ArrayList<String> aux2 = vt_first.get(s.charAt(i+1));
-                                if(aux2.contains("&")){
-                                    aux2.remove(c);
-                                }
-                                vt.put(c, aux2);
+                    if(vn.contains(c) && i != s.length()){
+                        if(vt_first.get(s.charAt(i+1)) != null){
+                            ArrayList<String> aux2 = vt_first.get(s.charAt(i+1));
+                            if(aux2.contains("&")){
+                                aux2.remove(c);
                             }
-                        } else{
-                            break;
+                            vt.put(c, aux2);
                         }
-                    //}
+                    } else{
+                        break;
+                    }
                 }
             }
         }
