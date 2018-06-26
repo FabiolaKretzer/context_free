@@ -479,6 +479,26 @@ public class Algorithms {
 /**
    * Verify context free grammar is direct recursive left?
 */ 
+    public boolean isRecursiveLeft(Context_free grammar){
+        Context_free gnew = grammar.getClone();
+        ArrayList<String> nt = new ArrayList();
+        for(Character key : gnew.getProductions().keySet()){
+            nt.add(key+"");
+        }
+        Context_free recur = removeRecursiveLeft(gnew);
+        ArrayList<String> ntR = new ArrayList();
+        for(Character key : recur.getProductions().keySet()){
+            ntR.add(key+"");
+        }
+        if(nt.size() == ntR.size()){
+            return false;
+        }
+        return true;
+    }
+    
+/**
+   * Verify context free grammar is direct recursive left?
+*/ 
     public boolean isDirectRecursiveLeft(Context_free grammar){
         Context_free gnew = grammar.getClone();
         for(Character key : gnew.getProductions().keySet()){
@@ -490,20 +510,92 @@ public class Algorithms {
         }
         return false;
     }
+    
 /**
-   * Verify context free grammar is recursive left?
-*/     
-    public boolean isRecursiveLeft(Context_free grammar){
-        
-        return true;
+   * Verify  the symbols context free grammar is direct recursive left?
+*/ 
+    public ArrayList<String> symbolsDirectRecursiveLeft(Context_free grammar){
+        Context_free gnew = grammar.getClone();
+        ArrayList<String> symbol = new ArrayList<>();
+        for(Character key : gnew.getProductions().keySet()){
+            for(String s : gnew.getProductions().get(key)){
+                 if(key == s.charAt(0)){
+                     symbol.add(s.charAt(0)+"");
+                 }  
+            }
+        }
+        return symbol;
     }
 
 /**
    * Transformer context free grammar in outer recursive left
 */  
     public Context_free removeRecursiveLeft(Context_free grammar){
-        
-        return new Context_free();
+        Context_free gnew = grammar.getClone();
+        ArrayList<String> nt = new ArrayList<>();
+        Context_free recur = new Context_free();
+        recur.setInitialSymbol(gnew.getInitialSymbol());
+        for(Character key : gnew.getProductions().keySet()){
+            nt.add(key+"");
+        }
+        for(int i = 0; i < nt.size(); i++){
+            for(int j = 0; j < i; j++){
+                Set<String> prodsToAdd = new HashSet<>();
+                Set<String> prodsToRemove = new HashSet<>();
+                for(String s : gnew.getProductions().get(i)){
+                    if(s.charAt(0) == nt.get(i).charAt(0)){
+                        prodsToRemove.add(s);
+                    }
+                    for(String s2 : gnew.getProductions().get(nt.get(j))){
+                        ArrayList<String> temp = new ArrayList<>();
+                        for(int in = 0; in < s2.length(); in++){
+                            temp.add(s2.charAt(in)+"");
+                        }
+                        for(int in = 0; in < s.length(); in++){
+                            temp.add(s.charAt(in)+"");
+                        }
+                        temp.remove(nt.get(j));
+                        recur.setProductions(nt.get(j).charAt(0), temp);
+                    }
+                }
+            }
+            ArrayList<String> ntRecur = symbolsDirectRecursiveLeft(gnew);
+            if(ntRecur.contains(nt.get(i))){
+                removeDirectLeftRecursion(nt.get(i), recur);
+            }
+        }
+        return recur;
+    }
+
+    private void removeDirectLeftRecursion(String symbolNT, Context_free grammar) {
+        Context_free gnew = grammar.getClone();
+        Context_free left = new Context_free();
+        left.setInitialSymbol(gnew.getInitialSymbol());
+        Character newNT = renameSymbol(gnew);
+        Set<String> prodsToAdd = new HashSet<>();
+        Set<String> prodsToRemove = new HashSet<>();
+        for(Character key : gnew.getProductions().keySet()){
+            for(String s : gnew.getProductions().get(key)){
+                if(s.charAt(0) == symbolNT.charAt(0)){
+                    ArrayList<String> temp = new ArrayList<>();
+                    for(int i = 0; i < s.length(); i++){
+                        temp.add(s.charAt(i)+"");
+                    }
+                    temp.add(newNT+"");
+                    left.setProductions(symbolNT.charAt(0), temp);
+                    prodsToRemove.add(s);
+                } else{
+                    ArrayList<String> temp = new ArrayList<>();
+                    for(int i = 0; i < s.length(); i++){
+                        temp.add(s.charAt(i)+"");
+                    }
+                    temp.add(newNT+"");
+                    left.setProductions(symbolNT.charAt(0), temp);
+                    prodsToRemove.add(s);
+                }
+                left.setProductions(symbolNT.charAt(0), "&");
+            }
+        }     
     }
     
 }

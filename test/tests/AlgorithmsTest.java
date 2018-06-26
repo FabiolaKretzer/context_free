@@ -787,14 +787,14 @@ public class AlgorithmsTest {
 
 /**
  * Test of isRecursiveLeft method, of class Algorithms.
-*/
-    @Test
+*
+    /**@Test
     public void testIsRecursiveLeft() {
         /**
         * S -> aS|Ab
         * A -> Ab|Bc|a
         * B -> Bd|Sa|e
-        */
+        *
         Context_free g = new Context_free();
         g.setInitialSymbol('S');
         g.setProductions('S', "aS");
@@ -813,14 +813,14 @@ public class AlgorithmsTest {
 
 /**
  * Test of removeRecursiveLeft method, of class Algorithms.
-*/
+*
     @Test
     public void testRemoveRecursiveLeft() {
          /**
         * S -> aS|Ab
         * A -> Ab|Bc|a
         * B -> Bd|Sa|e
-        */
+        *
         Context_free g = new Context_free();
         g.setInitialSymbol('S');
         g.setProductions('S', "aS");
@@ -838,7 +838,7 @@ public class AlgorithmsTest {
         * C -> bC|&
         * B -> aSaD|aCbaD|a
         * D -> dD|cCbaD|&
-        */
+        *
         Context_free r = new Context_free();
         r.setInitialSymbol('S');
         r.setProductions('S', "aS");
@@ -853,6 +853,6 @@ public class AlgorithmsTest {
         Algorithms alg = new Algorithms();
         
         assertEquals(r.toString(), alg.removeRecursiveLeft(g).toString());
-    }
+    }*/
     
 }
