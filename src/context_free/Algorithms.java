@@ -3,11 +3,18 @@
 package context_free;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class Algorithms {
     
@@ -111,13 +118,13 @@ public class Algorithms {
    * Context free grammar is epsilon free?
 */ 
     public boolean isEpsilonFree(Context_free grammar){
-        boolean bool = false;
+        boolean bool = true;
         Context_free gnew = grammar.getClone();
         for(Character key : gnew.getProductions().keySet()){
             ArrayList<String> temp = gnew.getProductions().get(key);
             for(String s : temp){
                 if(!Objects.equals(key, gnew.getInitialSymbol()) && "&".equals(s)){
-                    bool = true;
+                    bool = false;
                 }
             }
         }
@@ -133,6 +140,116 @@ public class Algorithms {
         if(isEpsilonFree(gnew)){
             return gnew;
         }
+        Set<Character> Ne = new HashSet<>();
+        boolean control = true;
+        //Passo 1 - Building Ne
+        while(control){
+            control = false;
+            for(Character key: gnew.getProductions().keySet()){
+                ArrayList<String> temp = gnew.getProductions().get(key);
+                for(String s : temp){
+                    if(s.equals("&") && !Ne.contains(key)){
+                        Ne.add(key);
+                        control = true;
+                    }
+                    boolean b = true;
+                    for(int i = 0; i > s.length(); i++){
+                        if(!Ne.contains(s.charAt(i))){
+                            b = false;
+                        }
+                    }
+                    if(b && !Ne.contains(key)){
+                        Ne.add(key);
+                        control = true;
+                    }
+                }
+            }
+        }
+        // Passo 2a - copiar as produções
+        gRet.setInitialSymbol(gnew.getInitialSymbol());
+        for(Character key: gnew.getProductions().keySet()){
+            ArrayList<String> temp = gnew.getProductions().get(key);
+            ArrayList<String> newProductions = new ArrayList<>();
+            for(String s : temp){
+                if(!s.equals("&")){
+                    newProductions.add(s);
+                }
+            }
+            gRet.setProductions(key, newProductions);
+        }
+        // Passo 2a - Done
+        // Passo 2b - Combinação das produções 
+        for(Character key: gnew.getProductions().keySet()){
+            ArrayList<String> temp = gnew.getProductions().get(key);
+            for(String s : temp){
+                if(!s.equals('&')){
+                    ArrayList<Character> BeNe = new ArrayList<>();
+                    for(Character c: s.toCharArray()){
+                        if(Ne.contains(c))
+                            BeNe.add(c);
+                    }
+                    //faz as combinações
+                    String[] status = new String[BeNe.size()]; //aqui pode ser qualquer objeto que implemente Comparable
+                    int cont=0;
+                    for(Character c: BeNe){
+                        status[cont++] = c.toString();
+                    }
+                    List<SortedSet<Comparable>> allCombList = new ArrayList<SortedSet<Comparable>>(); //aqui vai ficar a resposta
+                    for (String nstatus : status) {
+                            allCombList.add(new TreeSet<Comparable>(Arrays.asList(nstatus))); //insiro a combinação "1 a 1" de cada item
+                    }
+                    for (int nivel = 1; nivel < status.length; nivel++) { 
+                            List<SortedSet<Comparable>> statusAntes = new ArrayList<SortedSet<Comparable>>(allCombList); //crio uma cópia para poder não iterar sobre o que já foi
+                            for (Set<Comparable> antes : statusAntes) {
+                                    SortedSet<Comparable> novo = new TreeSet<Comparable>(antes); //para manter ordenado os objetos dentro do set
+                                    novo.add(status[nivel]);
+                                    if (!allCombList.contains(novo)) { //testo para ver se não está repetido
+                                            allCombList.add(novo);
+                                    }
+                            }
+                    }
+                    Collections.sort(allCombList, new Comparator<SortedSet<Comparable>>() { //aqui só para organizar a saída de modo "bonitinho"
+                            @Override
+                            public int compare(SortedSet<Comparable> o1, SortedSet<Comparable> o2) {
+                                    int sizeComp = o1.size() - o2.size();
+                                    if (sizeComp == 0) {
+                                            Iterator<Comparable> o1iIterator = o1.iterator();
+                                            Iterator<Comparable> o2iIterator = o2.iterator();
+                                            while (sizeComp == 0 && o1iIterator.hasNext() ) {
+                                                    sizeComp = o1iIterator.next().compareTo(o2iIterator.next());
+                                            }
+                                    }
+                                    return sizeComp;
+                            }
+                    });
+                    //allCombList contem todas as combinações
+                    for(SortedSet se: allCombList){
+                        String sclone = s+"";
+                        for(Object obj: se){
+                            sclone = sclone.replaceFirst(obj.toString(), "");
+                        }
+                        if(!sclone.equals("") && !gRet.getProductions().get(key).equals(sclone)){
+                            gRet.setProductions(key, sclone);
+                        }
+                    }
+                }
+            }
+        }
+        //passo 2c
+        char a = 'A';
+        ArrayList<Character> alphabet = new ArrayList<>();
+        while(a != 'Z'){
+            alphabet.add(a);
+            a++;
+        }
+        for(Character key : gnew.getProductions().keySet()){
+            alphabet.remove(key);
+        }
+        if(alphabet.contains('S'))
+            alphabet.set(0, 'S');
+        gRet.setProductions(alphabet.get(0), gRet.getInitialSymbol().toString());
+        gRet.setProductions(alphabet.get(0), "&");
+        gRet.setInitialSymbol(alphabet.get(0));
         return gRet;
     }
     
