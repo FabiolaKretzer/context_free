@@ -769,7 +769,7 @@ public class AlgorithmsTest {
         * B -> bC
         * C -> B|&
         */
-        Context_free r = new Context_free();
+        /**Context_free r = new Context_free();
         r.setInitialSymbol('S');
         r.setProductions('S', "aA");
         r.setProductions('S', "dS");
@@ -777,11 +777,11 @@ public class AlgorithmsTest {
         r.setProductions('A', "B");
         r.setProductions('B', "bC");
         r.setProductions('C', "B");
-        r.setProductions('C', "&");
+        r.setProductions('C', "&");*/
         
         Algorithms alg = new Algorithms();
         
-        assertEquals(r.toString(), alg.factoredNsteps(g, 1).toString());
+        assertEquals(true, alg.factoredNsteps(g, 1));
         
     }
 

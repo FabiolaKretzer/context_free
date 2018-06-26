@@ -411,10 +411,85 @@ public class Algorithms {
 /**
    * Transformer context free grammar in outer factoted en n steps
 */      
-    public Context_free factoredNsteps(Context_free grammar, int steps){
-        return new Context_free();
+    public Boolean factoredNsteps(Context_free grammar, int steps){
+        Context_free gnew = grammar.getClone();
+        if(isFactored(gnew)){
+            return true;
+        }
+        Context_free fact = new Context_free();
+        fact.setInitialSymbol(gnew.getInitialSymbol());
+        ArrayList<Character> nTerminal = new  ArrayList<>();
+        for(Character key : gnew.getProductions().keySet()){
+            nTerminal.add(key);
+        }
+        for(int i = 0; i < steps; i++){
+            Map<Character, Set<String>> symbol = new HashMap<>();
+            for(Character key : gnew.getProductions().keySet()){
+               Set<String> temp = new HashSet<>();
+               Set<String> toAdd = new HashSet<>(); 
+               for(String s : gnew.getProductions().get(key)){
+                   if(temp.contains(s.charAt(0))){
+                       toAdd.add(s.charAt(0)+"");
+                   } else{
+                       temp.add(s.charAt(0)+"");
+                   }
+                }
+                symbol.put(key, toAdd);				
+                Set<String> toRemove = new HashSet<String>();
+                
+                for(String s : symbol.get(key)){
+                    Character symbolNT = renameSymbol(gnew);
+                    for(String prod : gnew.getProductions().get(key)){
+                        if(prod.charAt(0) == s.charAt(0)){
+                            ArrayList<String> temp2 = new ArrayList<>();
+                            for(int j = 1; j < prod.length(); j++){
+                                temp2.add(prod.charAt(j)+"");
+                            }
+                            if(temp2.size() == 0){
+                                temp2.add("&");
+                            }
+                            fact.setProductions(symbolNT, temp2);
+                        }
+                    }
+                }
+            }
+        }
+        if (isFactored(fact)) {
+            return true;
+        }
+        return false;
+    }
+ 
+/**
+   * Rename symbol grammar
+*/ 
+    public Character renameSymbol(Context_free grammar){
+        Context_free gnew = new Context_free();
+        ArrayList<Character> nt = new ArrayList<>();
+        for(Character key : gnew.getProductions().keySet()){
+            nt.add(key);
+        }
+        Character symbol = 'A';
+        while(nt.contains(symbol)){
+            symbol++;
+        }
+        return symbol;
     }
 
+/**
+   * Verify context free grammar is direct recursive left?
+*/ 
+    public boolean isDirectRecursiveLeft(Context_free grammar){
+        Context_free gnew = grammar.getClone();
+        for(Character key : gnew.getProductions().keySet()){
+            for(String s : gnew.getProductions().get(key)){
+                 if(key == s.charAt(0)){
+                     return true;
+                 }  
+            }
+        }
+        return false;
+    }
 /**
    * Verify context free grammar is recursive left?
 */     
