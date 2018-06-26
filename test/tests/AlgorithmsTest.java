@@ -247,6 +247,30 @@ public class AlgorithmsTest {
         String a = alg.epsilonFree(g).toString();
         String b = result.toString();
         assertEquals(true, true);
+        
+        /*
+            S → AbB | AD
+            A → aA | B
+            B → SBD | CD
+            C → cC | AS | ε
+            D → dD | ε
+        */
+        
+        g = new Context_free();
+        g.setInitialSymbol('S');
+        g.setProductions('S',"AbB");
+        g.setProductions('S',"AD");
+        g.setProductions('A',"aA");
+        g.setProductions('A',"B");
+        g.setProductions('B',"SBD");
+        g.setProductions('B',"CD");
+        g.setProductions('C',"cC");
+        g.setProductions('C',"AS");
+        g.setProductions('C',"&");
+        g.setProductions('D',"dD");
+        g.setProductions('D',"&");
+        //alg.epsilonFree(g));
+        //ta funcionando
     }
  
 /**
