@@ -366,12 +366,45 @@ public class Algorithms {
 */      
     public boolean isFactored(Context_free grammar){
         Context_free gnew = grammar.getClone();
+        ArrayList<Character> nTerminal = new  ArrayList<>();
+        Map<Character, ArrayList<String>> symbol = new HashMap<>();
+        for(Character key : gnew.getProductions().keySet()){
+            nTerminal.add(key);
+        }
         for(Character key : gnew.getProductions().keySet()){
             ArrayList<String> list = gnew.getProductions().get(key);
+            ArrayList<String> temp = new ArrayList<>();
             for(String s : list){
-                
+                temp.add(s.charAt(0)+"");
+            }
+            symbol.put(key, temp);
+        }
+        Boolean interator = true;
+        while(interator){
+            interator = false;
+            for(Character key : gnew.getProductions().keySet()){
+                ArrayList<String> toAdd = new ArrayList<>();
+                ArrayList<String> toRemove = new ArrayList<>();
+                for(String s : symbol.get(key)){
+                    if(nTerminal.contains(s.charAt(0)) && symbol.get(s) != null){
+                        for (String s2: symbol.get(s)) {
+                            toAdd.add(s2);
+			}
+			toRemove.add(s);
+                        interator = true;
+                    }
+                } 
+                symbol.get(key).addAll(toAdd);
+                symbol.get(key).removeAll(toRemove);
             }
         }
+        for (Character key : gnew.getProductions().keySet()) {
+            Set<String> temp = new HashSet<>();
+            temp.addAll(symbol.get(key));
+            if (symbol.get(key).size() != temp.size()) {
+		return false;
+            }
+	}		
         return true;
     }
 
