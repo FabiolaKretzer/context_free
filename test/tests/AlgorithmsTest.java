@@ -215,7 +215,6 @@ public class AlgorithmsTest {
         
         Algorithms result = new Algorithms();
         result.transformProper(g);
-        //assertEquals(false, result.tran(g));
     } 
     
 /**
