@@ -256,18 +256,44 @@ public class Algorithms {
 /**
    * Transformer context free grammar in outer remove cycles
 */     
-    public boolean isCycles(Context_free grammar){
+    public boolean hasCycles(Context_free grammar){
         Context_free gnew = grammar.getClone();
         ArrayList<Character> aux = new ArrayList<>();
         for(Character key : gnew.getProductions().keySet()){
             aux.add(key);
         }
+        Map<Character,ArrayList<String>> map = new HashMap<>();
+        for(Character key : gnew.getProductions().keySet()){
+            map.put(key, new ArrayList<>());
+        }
         for(Character key : gnew.getProductions().keySet()){
             ArrayList<String> temp = gnew.getProductions().get(key);
             for(String s : temp){
                 if(s.length() == 1 && aux.contains(s.charAt(0))){
-                    return true;
+                    map.get(key).add(s);
                 }
+            }
+        }
+        for(Character key : gnew.getProductions().keySet()){
+            boolean control = true;
+            while(control){
+                control = false;
+                ArrayList<String> alcan = new ArrayList<>();
+                alcan.addAll(map.get(key));
+                
+                for(String s : alcan){
+                    ArrayList<String> reac = map.get(s.charAt(0));
+                    for(String s1: reac){
+                        if(!map.get(key).contains(s1)){
+                            map.get(key).add(s1);
+                        }
+                    }
+                }
+            }
+        }
+        for(Character key : gnew.getProductions().keySet()){
+            if(map.get(key).contains(key.toString())){
+                return true;
             }
         }
         return false;
@@ -278,10 +304,60 @@ public class Algorithms {
 */     
     public Context_free removeCycles(Context_free grammar){
         Context_free gnew = grammar.getClone();
-        if(isCycles(gnew)){
+        if(!hasCycles(gnew)){
             return gnew;
         }
-        return new Context_free();
+        ArrayList<Character> aux = new ArrayList<>();
+        for(Character key : gnew.getProductions().keySet()){
+            aux.add(key);
+        }
+        Map<Character,ArrayList<String>> Nx = new HashMap<>();
+        for(Character key : gnew.getProductions().keySet()){
+            ArrayList<String> list = new ArrayList<>();
+            list.add(key.toString());
+            Nx.put(key, list);
+        }
+        for(Character key : gnew.getProductions().keySet()){
+            ArrayList<String> temp = gnew.getProductions().get(key);
+            for(String s : temp){
+                if(s.length() == 1 && aux.contains(s.charAt(0)) && !Nx.get(key).contains(s)){
+                    Nx.get(key).add(s);
+                }
+            }
+        }
+        for(Character key : gnew.getProductions().keySet()){
+            boolean control = true;
+            while(control){
+                control = false;
+                ArrayList<String> alcan = new ArrayList<>();
+                alcan.addAll(Nx.get(key));
+                
+                for(String s : alcan){
+                    ArrayList<String> reac = Nx.get(s.charAt(0));
+                    for(String s1: reac){
+                        if(!Nx.get(key).contains(s1)){
+                            Nx.get(key).add(s1);
+                        }
+                    }
+                }
+            }
+        }
+        Context_free gRet = new Context_free();
+        for(Character key : gnew.getProductions().keySet()){
+            ArrayList<String> temp = gnew.getProductions().get(key);
+            for(String s : temp){
+                if(s.length() != 1 || !aux.contains(s.charAt(0))){
+                    for(Character keyA: gnew.getProductions().keySet()) {
+                        if(Nx.get(keyA).contains(key.toString())){
+                            gRet.setProductions(keyA, s);
+                        }
+                    }
+                }
+            }
+                
+        }
+        gRet.setInitialSymbol(gnew.getInitialSymbol());
+        return gRet;
     }
  
 /**
