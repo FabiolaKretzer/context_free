@@ -469,7 +469,6 @@ public class AlgorithmsTest {
         result.setProductions('D', "c");
         
         Algorithms alg = new Algorithms();
-        
         assertEquals(result.toString(), alg.fertile(g).toString());
     }
 

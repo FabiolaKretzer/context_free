@@ -15,6 +15,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Algorithms {
     
@@ -365,14 +367,19 @@ public class Algorithms {
 */
     public Set<Character> getFertileSymbols(Context_free grammar){
         Context_free gnew = grammar.getClone();
-        Set<Character> vi = new HashSet<Character>();
+        Set<Character> vi = new HashSet<>();
         boolean bool = true; 
         while(bool){
             bool = false;
             for(Character key : gnew.getProductions().keySet()){
-                if(isFertile(key, gnew)){
-                    vi.add(key);
-                    bool = true;
+                ArrayList<String> temp = gnew.getProductions().get(key);
+                for(String s : temp) {
+                    if(isFertile(s, vi)){
+                        if(!vi.contains(key)) {
+                            vi.add(key);
+                            bool=true;
+                        }    
+                    }
                 }
             }
         }
@@ -382,8 +389,14 @@ public class Algorithms {
 /**
    * Symbol is fertile?
 */
-    public boolean isFertile(Character c, Context_free grammar){
-        Context_free gnew = grammar.getClone();
+    public boolean isFertile(String s, Set<Character> vi){
+        Pattern p = Pattern.compile("[a-z&]");
+        for(Character c: s.toCharArray()){
+            Matcher m = p.matcher(c.toString());
+            if(!vi.contains(c) && !m.matches()){
+                return false;
+            }
+        }
         return true;
     }
 
@@ -391,8 +404,25 @@ public class Algorithms {
    * Transformer context free grammar in outer productive
 */     
     public Context_free fertile(Context_free grammar){
-        
-        return new Context_free();
+        Set<Character> set = getFertileSymbols(grammar);
+        Context_free gnew = grammar.getClone();
+        Context_free gRet = new Context_free();
+        if(!set.contains(gnew.getInitialSymbol())){
+            gRet.setInitialSymbol('S');
+            gRet.setProductions('S',"S");
+            return gRet;
+        }
+        for(Character key : gnew.getProductions().keySet()){
+                ArrayList<String> temp = gnew.getProductions().get(key);
+                for(String s : temp) {
+                    if(isFertile(s, set)){
+                        gRet.setProductions(key, s);
+                    }
+                }
+        }
+        gRet.setInitialSymbol(gnew.getInitialSymbol());
+        System.out.println(gRet);
+        return gRet;
     }
 
 /**
