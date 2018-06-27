@@ -145,17 +145,22 @@ public class Algorithms {
         Set<Character> Ne = new HashSet<>();
         boolean control = true;
         //Passo 1 - Building Ne
-        while(control){
-            control = false;
-            for(Character key: gnew.getProductions().keySet()){
+        for(Character key: gnew.getProductions().keySet()){
                 ArrayList<String> temp = gnew.getProductions().get(key);
                 for(String s : temp){
                     if(s.equals("&") && !Ne.contains(key)){
                         Ne.add(key);
                         control = true;
                     }
+                }
+        }
+        while(control){
+            control = false;
+            for(Character key: gnew.getProductions().keySet()){
+                ArrayList<String> temp = gnew.getProductions().get(key);
+                for(String s : temp){
                     boolean b = true;
-                    for(int i = 0; i > s.length(); i++){
+                    for(int i = 0; i < s.length(); i++){
                         if(!Ne.contains(s.charAt(i))){
                             b = false;
                         }
@@ -238,6 +243,8 @@ public class Algorithms {
             }
         }
         //passo 2c
+        if(!Ne.contains(gnew.getInitialSymbol()))
+            return gRet;
         char a = 'A';
         ArrayList<Character> alphabet = new ArrayList<>();
         while(a != 'Z'){
@@ -421,7 +428,6 @@ public class Algorithms {
                 }
         }
         gRet.setInitialSymbol(gnew.getInitialSymbol());
-        System.out.println(gRet);
         return gRet;
     }
 
@@ -429,10 +435,42 @@ public class Algorithms {
    * Transformer context free grammar in outer reachable
 */     
     public Context_free reachable(Context_free grammar){
-        
-        return new Context_free();
+        Context_free gnew = grammar.getClone();
+        Context_free gRet = new Context_free();
+        gRet.setInitialSymbol(gnew.getInitialSymbol());
+        Pattern p = Pattern.compile("[A-Z]");
+        Set<Character> Vi = new HashSet<>();
+        Vi.add(gnew.getInitialSymbol());
+        boolean control = true;
+        while(control){
+            control = false;
+            Set<Character> Vaux = new HashSet<>();
+            for(Character reac: Vi) {
+                ArrayList<String> prod = gnew.getProductions().get(reac);
+                for(String s: prod){
+                    for(Character c: s.toCharArray()){
+                        Matcher m = p.matcher(c.toString());
+                        if(m.matches() && !Vi.contains(c)){
+                            Vaux.add(c);
+                            control = true;
+                        }
+                    }
+                }
+            }
+            Vi.addAll(Vaux);
+        }
+        for(Character key : gnew.getProductions().keySet()){
+                if(Vi.contains(key)){
+                ArrayList<String> temp = gnew.getProductions().get(key);
+                    for(String s : temp) {
+                        gRet.setProductions(key, s);
+                    }
+                }
+        }
+        return gRet;
     }
 
+   
 /**
    * Calculate first the context free grammar
 */     

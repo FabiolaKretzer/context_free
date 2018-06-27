@@ -179,6 +179,46 @@ public class AlgorithmsTest {
     } 
     
 /**
+ * Test of transformProper method, of class Algorithms.
+*/
+    @Test
+    public void testTransformProper() {
+        /**
+        * S -> aFG|bFd|Sa
+        * A -> aA|&
+        * B -> cG|aCG
+        * C -> cBa|ca|&
+        * D -> dCc|&
+        * F -> bFd|aC|Ab|GA
+        * G -> Bc|BCa
+        */
+        Context_free g = new Context_free();
+        g.setInitialSymbol('S');
+        g.setProductions('S', "aFG");
+        g.setProductions('S', "bFd");
+        g.setProductions('S', "Sa");
+        g.setProductions('A', "aA");
+        g.setProductions('A', "&");
+        g.setProductions('B', "cG");
+        g.setProductions('B', "aCG");
+        g.setProductions('C', "cBa");
+        g.setProductions('C', "ca");
+        g.setProductions('C', "&");
+        g.setProductions('D', "dCc");
+        g.setProductions('D', "&");
+        g.setProductions('F', "bFd");
+        g.setProductions('F', "aC");
+        g.setProductions('F', "Ab");
+        g.setProductions('F', "GA");
+        g.setProductions('G', "Bc");
+        g.setProductions('G', "BCa");
+        
+        Algorithms result = new Algorithms();
+        result.transformProper(g);
+        //assertEquals(false, result.tran(g));
+    } 
+    
+/**
  * Test of epsilonFree method, of class Algorithms.
 */
     @Test
@@ -269,7 +309,7 @@ public class AlgorithmsTest {
         g.setProductions('C',"&");
         g.setProductions('D',"dD");
         g.setProductions('D',"&");
-        //alg.epsilonFree(g));
+        //alg.epsilonFree(g);
         //ta funcionando
     }
  
@@ -508,16 +548,15 @@ public class AlgorithmsTest {
         
         Context_free result = new Context_free();
         result.setInitialSymbol('S');
-        g.setProductions('S', "aSa");
-        g.setProductions('S', "dDd");
-        g.setProductions('B', "dD");
-        g.setProductions('B', "bB");
-        g.setProductions('B', "b");
-        g.setProductions('D', "bbB");
-        g.setProductions('D', "d");
+        result.setProductions('S', "aSa");
+        result.setProductions('S', "dDd");
+        result.setProductions('B', "dD");
+        result.setProductions('B', "bB");
+        result.setProductions('B', "b");
+        result.setProductions('D', "bbB");
+        result.setProductions('D', "d");
         
         Algorithms alg = new Algorithms();
-        
         assertEquals(result.toString(), alg.reachable(g).toString());
     }
 
